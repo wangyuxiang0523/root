@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fh.dao.MovieDao">
+ <select id="queryPageList" resultType="com.fh.model.Movie">
+     select * from movie
+     <include refid="seach"></include>
+     limit #{pageBean.start},#{pageBean.length}
+ </select>
+    <select id="queryCount" resultType="long" parameterType="com.fh.model.Movie">
+        select count(id) from movie
+        <include refid="seach"></include>
+    </select>
+    <sql id="seach">
+        <where>
+        <if test="movie.name!=null and movie.name!=''">
+           name like concat('%',#{movie.name},'%')
+        </if>
+        <if test="movie.startTime!=null">
+        and    showTime &gt;= #{movie.startTime}
+        </if>
+        <if test="movie.endTime!=null">
+        and    showTime &lt;=#{movie.endTime}
+        </if>
+        <if test="movie.status!=null">
+        and    status = #{movie.status}
+        </if>
+        </where>
+    </sql>
+    <insert id="addMovie" parameterType="com.fh.model.Movie">
+            insert into movie (name,price,status,showTime,imgUrl)values
+            (#{name},#{price},#{status},#{showTime},#{imgUrl})
+   </insert>
+    <select id="queryMovieById" resultType="com.fh.model.Movie" parameterType="Integer">
+         select * from movie where  id=#{id}
+    </select>
+    <update id="updateMovie" parameterType="com.fh.model.Movie">
+        update movie set name= #{name},price=#{price},status=#{status},showTime=#{showTime},imgUrl=#{imgUrl}
+        where id= #{id}
+    </update>
+</mapper>
